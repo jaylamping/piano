@@ -85,24 +85,21 @@ class KeyboardScanner:
         3) return an integer where the 16 bits represent row states (0..15).
         """
         self.PL.value = False
-        time.sleep(0.000002)
+        time.sleep(0.000001)  # 1 microsecond instead of 2
         self.PL.value = True
 
         value = 0
         for _ in range(16):
-            value <<= 1
-            bit_in = self.DATA.value
-            value |= bit_in
+            value = (value << 1) | self.DATA.value
             self.CLK.value = True
-            time.sleep(0.000001)
+            time.sleep(0.0000005)
             self.CLK.value = False
-            time.sleep(0.000001)
+            time.sleep(0.0000005)
         return value
 
     def scan_keyboard(self):
         print(f"Starting {self.side} keyboard scan. Press Ctrl+C to exit.")
 
-        # track previous state for each key
         old_key_states = [False] * (self.num_cols * self.num_rows)
         
         try:
@@ -112,45 +109,46 @@ class KeyboardScanner:
                     self.set_column(col)
                     data_16 = self.read_shift_registers_16bits()
                     
-                    for row in range(self.num_rows):
-                        bit_val = (data_16 >> row) & 1
-                        pressed = (bit_val == 1)
-                        new_key_states.append(pressed)
+                    # bit manip
+                    new_key_states.extend([(data_16 >> row) & 1 == 1 for row in range(self.num_rows)])
 
-                # Compare states and handle changes
-                for idx, (old_state, new_state) in enumerate(zip(old_key_states, new_key_states)):
-                    if old_state != new_state:
-                        col_idx = idx // self.num_rows
-                        row_idx = idx % self.num_rows
-                        
-                        if new_state:
-                            if row_idx % 2 == 0:
-                                print(f"{self.side} key pressed at col={col_idx}, row={row_idx}")
+                # process only changed keys
+                changed_indices = [idx for idx, (old, new) in enumerate(zip(old_key_states, new_key_states)) if old != new]
+                
+                for idx in changed_indices:
+                    col_idx = idx // self.num_rows
+                    row_idx = idx % self.num_rows
+                    new_state = new_key_states[idx]
+                    
+                    if new_state:
+                        if row_idx % 2 == 0:
+                            print(f"{self.side} key pressed at col={col_idx}, row={row_idx}")
 
-                            if (self.side_value, col_idx, row_idx) in KEY_MAP:
-                                midi_note = KEY_MAP[(self.side_value, col_idx, row_idx)]
-                                note_name = NOTE_NAMES.get(midi_note, "Unknown")
-                                print(f"Note: {note_name} (MIDI: {midi_note})")
+                        if (self.side_value, col_idx, row_idx) in KEY_MAP:
+                            midi_note = KEY_MAP[(self.side_value, col_idx, row_idx)]
+                            note_name = NOTE_NAMES.get(midi_note, "Unknown")
+                            print(f"Note: {note_name} (MIDI: {midi_note})")
 
-                            velocity_timings[(self.side_value, col_idx, row_idx)] = time.time()
+                        current_time = time.time()
+                        velocity_timings[(self.side_value, col_idx, row_idx)] = current_time
 
-                            if row_idx % 2 == 0:
-                                top_row = row_idx + 1
-                            else:
-                                top_row = row_idx - 1
-
-                            if (self.side_value, col_idx, top_row) in velocity_timings:
-                                dt = time.time() - velocity_timings[(self.side_value, col_idx, top_row)]
-                                velocity = delta_time_to_velocity(dt)
-                                print(f"{self.side} Velocity for (col={col_idx}): {velocity}")
+                        if row_idx % 2 == 0:
+                            top_row = row_idx + 1
                         else:
-                            if row_idx % 2 == 0:
-                                print(f"{self.side} key released at col={col_idx}, row={row_idx}")
-                            if (self.side_value, col_idx, row_idx) in velocity_timings:
-                                del velocity_timings[(self.side_value, col_idx, row_idx)]
+                            top_row = row_idx - 1
+
+                        timing_key = (self.side_value, col_idx, top_row)
+                        if timing_key in velocity_timings:
+                            dt = current_time - velocity_timings[timing_key]
+                            velocity = delta_time_to_velocity(dt)
+                            print(f"{self.side} Velocity for (col={col_idx}): {velocity}")
+                    else:
+                        if row_idx % 2 == 0:
+                            print(f"{self.side} key released at col={col_idx}, row={row_idx}")
+                        velocity_timings.pop((self.side_value, col_idx, row_idx), None)
 
                 old_key_states = new_key_states
-                time.sleep(0.05)
+                time.sleep(0.005)
 
         except KeyboardInterrupt:
             pass
