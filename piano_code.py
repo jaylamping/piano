@@ -22,9 +22,9 @@ LEFT_NUM_COLS = 8
 LEFT_NUM_ROWS = 10
 
 # Right CD74HC238 address pins
-RIGHT_A0_PIN = 1
-RIGHT_A1_PIN = 2
-RIGHT_A2_PIN = 3
+RIGHT_A0_PIN = 17
+RIGHT_A1_PIN = 27
+RIGHT_A2_PIN = 22
 
 # Right SN74HC165 control pins
 RIGHT_PL_PIN   = 19  # /PL (active-low parallel load)
