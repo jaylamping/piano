@@ -94,7 +94,7 @@ def delta_time_to_velocity(dt):
 # MAIN SCAN LOOP
 #
 
-def main():
+def right_main():
     print("Starting keyboard scan with gpiozero. Press Ctrl+C to exit.")
     
     # Track previous state for each key
@@ -125,7 +125,7 @@ def main():
                     if new_state:
                         # Key pressed
                         print(f"Key pressed at col={col_idx}, row={row_idx}")
-                        velocity_timings[(col_idx, row_idx)] = time.time()
+                        velocity_timings[(1, col_idx, row_idx)] = time.time()
                         
                         print(f"velocity={velocity_timings}")
                         
@@ -135,16 +135,16 @@ def main():
                         else:
                             top_row = row_idx - 1
 
-                        if (col_idx, top_row) in velocity_timings:
-                            dt = time.time() - velocity_timings[(col_idx, top_row)]
+                        if (1, col_idx, top_row) in velocity_timings:
+                            dt = time.time() - velocity_timings[(1, col_idx, top_row)]
                             velocity = delta_time_to_velocity(dt)
                             print(f"Velocity for (col={col_idx}): {velocity}")
                     else:
                         # Key released
                         print(f"Key released at col={col_idx}, row={row_idx}")
                         # Optionally clear the press time
-                        if (col_idx, row_idx) in velocity_timings:
-                            del velocity_timings[(col_idx, row_idx)]
+                        if (1, col_idx, row_idx) in velocity_timings:
+                            del velocity_timings[(1, col_idx, row_idx)]
 
             old_key_states = new_key_states
             time.sleep(0.05)
@@ -154,4 +154,4 @@ def main():
     print("Exiting...")
 
 if __name__ == "__main__":
-    main()
+    right_main()
