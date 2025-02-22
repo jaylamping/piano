@@ -4,6 +4,7 @@ import time
 import math
 import mido
 
+print(mido.get_output_names())
 #
 # PIN ASSIGNMENTS
 #
