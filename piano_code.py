@@ -80,21 +80,22 @@ class KeyboardScanner:
 
     def read_shift_registers_16bits(self):
         """
+        https://www.ti.com/lit/ds/symlink/sn74hc165.pdf?ts=1739924978934&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FSN74HC165
         1) pulse /PL low briefly to latch the parallel inputs of both SN74HC165 chips.
         2) shift out 16 bits by toggling the clock and reading data.
         3) return an integer where the 16 bits represent row states (0..15).
         """
         self.PL.value = False
-        time.sleep(0.000001)  # 1 microsecond instead of 2
+        time.sleep(0.0000001)  # .1 microsecond
         self.PL.value = True
 
         value = 0
         for _ in range(16):
             value = (value << 1) | self.DATA.value
             self.CLK.value = True
-            time.sleep(0.0000005)
+            time.sleep(0.0000005) 
             self.CLK.value = False
-            time.sleep(0.0000005)
+            time.sleep(0.0000005) 
         return value
 
     def scan_keyboard(self):
@@ -148,7 +149,7 @@ class KeyboardScanner:
                         velocity_timings.pop((self.side_value, col_idx, row_idx), None)
 
                 old_key_states = new_key_states
-                time.sleep(0.005)
+                time.sleep(0.001)
 
         except KeyboardInterrupt:
             pass
