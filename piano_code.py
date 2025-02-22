@@ -8,14 +8,14 @@ import math
 #
 
 # Left CD74HC238 address pins
-LEFT_A0_PIN = 1
-LEFT_A1_PIN = 2
-LEFT_A2_PIN = 3
+LEFT_A0_PIN = 23
+LEFT_A1_PIN = 24
+LEFT_A2_PIN = 25
 
 # Left SN74HC165 control pins
-LEFT_PL_PIN   = 4  # /PL (active-low parallel load)
-LEFT_CLK_PIN  = 5  # CP (shift clock)
-LEFT_DATA_PIN = 6  # Q7 output from the second SN74HC165
+LEFT_PL_PIN   = 16 # /PL (active-low parallel load)
+LEFT_CLK_PIN  = 20 # CP (shift clock)
+LEFT_DATA_PIN = 21 # Q7 output from the second SN74HC165
 
 # Left Number of columns and rows
 LEFT_NUM_COLS = 8
