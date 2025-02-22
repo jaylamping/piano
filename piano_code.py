@@ -127,7 +127,8 @@ def right_main():
                     
                     if new_state:
                         # key pressed
-                        print(f"Key pressed at col={col_idx}, row={row_idx}")
+                        if row_idx % 2 == 0: # only print for non velocity switches
+                            print(f"Key pressed at col={col_idx}, row={row_idx}")
 
                         # mapping data
                         if (RIGHT, col_idx, row_idx) in KEY_MAP:
