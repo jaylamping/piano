@@ -126,13 +126,18 @@ def right_main():
                     row_idx = idx % NUM_ROWS
                     
                     if new_state:
-                        # Key pressed
+                        # key pressed
                         print(f"Key pressed at col={col_idx}, row={row_idx}")
+
+                        # mapping data
+                        if (RIGHT, col_idx, row_idx) in KEY_MAP:
+                            midi_note = KEY_MAP[(RIGHT, col_idx, row_idx)]
+                            note_name = NOTE_NAMES.get(midi_note, "Unknown")
+                            print(f"Note: {note_name} (MIDI: {midi_note})")
+
+                        # velocity data
                         velocity_timings[(RIGHT, col_idx, row_idx)] = time.time()
-                        
-                        print(f"velocity={velocity_timings}")
-                        
-                        # If this is the bottom switch row, check if top row was pressed
+
                         if row_idx % 2 == 0:
                             top_row = row_idx + 1
                         else:
@@ -142,10 +147,12 @@ def right_main():
                             dt = time.time() - velocity_timings[(RIGHT, col_idx, top_row)]
                             velocity = delta_time_to_velocity(dt)
                             print(f"Velocity for (col={col_idx}): {velocity}")
+
                     else:
-                        # Key released
+                        # key released
                         print(f"Key released at col={col_idx}, row={row_idx}")
-                        # Optionally clear the press time
+
+                        # clear velocity data
                         if (RIGHT, col_idx, row_idx) in velocity_timings:
                             del velocity_timings[(RIGHT, col_idx, row_idx)]
 
