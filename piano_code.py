@@ -127,6 +127,7 @@ class KeyboardScanner:
                         if row_idx % 2 == 0:
                             print(f"{self.side} key pressed at col={col_idx}, row={row_idx}")
 
+                        midi_note = None
                         if (self.side_value, col_idx, row_idx) in KEY_MAP:
                             midi_note = KEY_MAP[(self.side_value, col_idx, row_idx)]
                             note_name = NOTE_NAMES.get(midi_note, "Unknown")
@@ -146,15 +147,19 @@ class KeyboardScanner:
                             velocity = delta_time_to_velocity(dt)
                             print(f"{self.side} Velocity for (col={col_idx}): {velocity}")
                             
-                            note_on = mido.Message('note_on', note=midi_note, velocity=velocity)
-                            outport.send(note_on)
+                            if midi_note is not None:
+                                note_on = mido.Message('note_on', note=midi_note, velocity=velocity)
+                                outport.send(note_on)
                     else:
                         if row_idx % 2 == 0:
                             print(f"{self.side} key released at col={col_idx}, row={row_idx}")
                         velocity_timings.pop((self.side_value, col_idx, row_idx), None)
                         
-                        note_off = mido.Message('note_off', note=midi_note, velocity = 0)
-                        outport.send(note_off)
+                        # look up midi note
+                        if (self.side_value, col_idx, row_idx) in KEY_MAP:
+                            midi_note = KEY_MAP[(self.side_value, col_idx, row_idx)]
+                            note_off = mido.Message('note_off', note=midi_note, velocity=0)
+                            outport.send(note_off)
 
                 old_key_states = new_key_states
                 time.sleep(0.001)
