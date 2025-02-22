@@ -1,4 +1,5 @@
 from gpiozero import OutputDevice, InputDevice
+from piano_mapping import KEY_MAP, NOTE_NAMES
 import time
 import math
 
