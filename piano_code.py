@@ -5,6 +5,7 @@ import math
 import mido
 
 print(mido.get_output_names())
+outport = mido.open_output('Midi Through:Midi Through Port-0 14:0')
 #
 # PIN ASSIGNMENTS
 #
@@ -145,10 +146,16 @@ class KeyboardScanner:
                             dt = current_time - velocity_timings[timing_key]
                             velocity = delta_time_to_velocity(dt)
                             print(f"{self.side} Velocity for (col={col_idx}): {velocity}")
+                            
+                            note_on = mido.Message('note_on', note=midi_note, velocity=velocity)
+                            outport.send(note_on)
                     else:
                         if row_idx % 2 == 0:
                             print(f"{self.side} key released at col={col_idx}, row={row_idx}")
                         velocity_timings.pop((self.side_value, col_idx, row_idx), None)
+                        
+                        note_off = mido.Message('note_off', note=midi_note, velocity = 0)
+                        outport.send(note_off)
 
                 old_key_states = new_key_states
                 time.sleep(0.001)
