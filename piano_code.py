@@ -4,8 +4,6 @@ import time
 import math
 import mido
 
-print(mido.get_output_names())
-outport = mido.open_output('Midi Through:Midi Through Port-0 14:0')
 #
 # PIN ASSIGNMENTS
 #
@@ -42,6 +40,7 @@ RIGHT_NUM_ROWS = 12
 # Variables
 #
 
+outport = mido.open_output('Midi Through:Midi Through Port-0 14:0')
 velocity_timings = {}
 LEFT = 0
 RIGHT = 1
