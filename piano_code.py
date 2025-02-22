@@ -28,6 +28,8 @@ NOTES = [
     "C", "C#", "D", "D#", "E", "F",
     "F#", "G", "G#", "A", "A#", "B"
 ]
+LEFT = 0
+RIGHT = 1
 
 #
 # SETUP GPIOZERO DEVICES
@@ -125,7 +127,7 @@ def right_main():
                     if new_state:
                         # Key pressed
                         print(f"Key pressed at col={col_idx}, row={row_idx}")
-                        velocity_timings[(1, col_idx, row_idx)] = time.time()
+                        velocity_timings[(RIGHT, col_idx, row_idx)] = time.time()
                         
                         print(f"velocity={velocity_timings}")
                         
@@ -135,16 +137,16 @@ def right_main():
                         else:
                             top_row = row_idx - 1
 
-                        if (1, col_idx, top_row) in velocity_timings:
-                            dt = time.time() - velocity_timings[(1, col_idx, top_row)]
+                        if (RIGHT, col_idx, top_row) in velocity_timings:
+                            dt = time.time() - velocity_timings[(RIGHT, col_idx, top_row)]
                             velocity = delta_time_to_velocity(dt)
                             print(f"Velocity for (col={col_idx}): {velocity}")
                     else:
                         # Key released
                         print(f"Key released at col={col_idx}, row={row_idx}")
                         # Optionally clear the press time
-                        if (1, col_idx, row_idx) in velocity_timings:
-                            del velocity_timings[(1, col_idx, row_idx)]
+                        if (RIGHT, col_idx, row_idx) in velocity_timings:
+                            del velocity_timings[(RIGHT, col_idx, row_idx)]
 
             old_key_states = new_key_states
             time.sleep(0.05)
