@@ -151,7 +151,8 @@ def right_main():
 
                     else:
                         # key released
-                        print(f"Key released at col={col_idx}, row={row_idx}")
+                        if row_idx % 2 == 0: # only print for non velocity switches
+                            print(f"Key released at col={col_idx}, row={row_idx}")
 
                         # clear velocity data
                         if (RIGHT, col_idx, row_idx) in velocity_timings:
