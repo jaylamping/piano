@@ -50,8 +50,7 @@ RIGHT = 1
 #
 
 def delta_time_to_velocity(dt):
-    # Very simplistic scaling; you might use a more sophisticated formula or thresholds
-    # The constant 0.01 is arbitrary and depends on how fast your scan loop is
+    # Gippity scaling... will probably need to update this in the future
     velocity = 127 - int(dt / 0.01)
     # Clamp to [1..127]
     return max(1, min(127, velocity))
