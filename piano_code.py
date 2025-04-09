@@ -14,9 +14,9 @@ LEFT_A1_PIN = 24
 LEFT_A2_PIN = 25
 
 # Left SN74HC165 control pins
-LEFT_PL_PIN   = 16 # /PL (active-low parallel load)
-LEFT_CLK_PIN  = 20 # CP (shift clock)
-LEFT_DATA_PIN = 21 # Q7 output from the second SN74HC165
+LEFT_PL_PIN   = 16  # /PL (active-low parallel load)
+LEFT_CLK_PIN  = 20  # CP (shift clock)
+LEFT_DATA_PIN = 21  # Q7 output from the second SN74HC165
 
 # Left Number of columns and rows
 LEFT_NUM_COLS = 8
@@ -30,7 +30,7 @@ RIGHT_A2_PIN = 22
 # Right SN74HC165 control pins
 RIGHT_PL_PIN   = 19  # /PL (active-low parallel load)
 RIGHT_CLK_PIN  = 26  # CP (shift clock)
-RIGHT_DATA_PIN = 5  # Q7 output from the second SN74HC165
+RIGHT_DATA_PIN = 5   # Q7 output from the second SN74HC165
 
 # Right Number of columns and rows
 RIGHT_NUM_COLS = 8
@@ -94,7 +94,7 @@ class KeyboardScanner:
         for _ in range(16):
             value = (value << 1) | self.DATA.value
             self.CLK.value = True
-            time.sleep(0.0000005) 
+            time.sleep(0.0000005) # .5 microsecond between pulses per docs
             self.CLK.value = False
             time.sleep(0.0000005) 
         return value
@@ -161,7 +161,7 @@ class KeyboardScanner:
                             outport.send(note_off)
 
                 old_key_states = new_key_states
-                time.sleep(0.001)
+                time.sleep(0.00001)
 
         except KeyboardInterrupt:
             pass
